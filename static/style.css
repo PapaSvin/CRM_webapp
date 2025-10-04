@@ -1,0 +1,241 @@
+:root {
+    --bg: #f8fafc;
+    --fg: #0f172a;
+    --muted: #64748b;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --primary: #2563eb;
+    --primary-600: #1d4ed8;
+    --accent: #10b981;
+    --danger: #ef4444;
+}
+
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    height: 100%;
+}
+body {
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+        Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    margin: 0;
+    padding: 0;
+    color: var(--fg);
+    background: var(--bg);
+}
+
+header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+header nav {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 14px 20px;
+}
+header nav a {
+    margin-right: 12px;
+    text-decoration: none;
+    color: var(--muted);
+    font-weight: 600;
+
+    padding: 8px;
+}
+header nav a:hover {
+    color: var(--fg);
+}
+
+main {
+    max-width: 1060px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+h1,
+h2,
+h3 {
+    margin: 0 0 12px;
+}
+p {
+    color: var(--fg);
+}
+
+/* Card */
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+/* Forms */
+form {
+    display: block;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+    width: 100%;
+    max-width: 520px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    background: #fff;
+    color: var(--fg);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+textarea {
+    min-height: 100px;
+}
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+button,
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.02s;
+}
+button:hover,
+.btn:hover {
+    background: var(--primary-600);
+}
+button:active,
+.btn:active {
+    transform: translateY(1px);
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ul li {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+ul li a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 700;
+}
+ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+}
+th,
+td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+th {
+    background: #f5f7fb;
+}
+
+/* Footer */
+footer {
+    max-width: 1060px;
+    margin: 24px auto;
+    padding: 0 20px 24px;
+    color: var(--muted);
+}
+
+/* Autocomplete dropdown */
+#suggest > div {
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+}
+#suggest a {
+    border-bottom: 1px solid var(--border);
+}
+/* Company history table */
+table code {
+    background: #eef2ff;
+    padding: 2px 4px;
+    border-radius: 6px;
+}
+table small {
+    color: var(--muted);
+}
+
+::highlight(searchHighlight) {
+    background-color: yellow;
+}
+
+.contact_table {
+    margin-bottom: 30px;
+}
+
+.contact_table th,
+.contact_table td {
+    text-align: center;
+}
+
+.contact_table td {
+    width: 33%;
+    padding: 10px;
+
+    padding-bottom: 6px;
+}
+
+.contact_table tr:nth-child(even) {
+    background-color: var(--border);
+}
+
+.contact_table input[type="checkbox"] {
+    -ms-transform: scale(1.5);
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+.contact_table textarea {
+    resize: vertical;
+    width: 100%;
+    min-height: 30px;
+}
+
+.contact_tabletextarea:focus {
+    outline: none;
+    border: none;
+}
+
+/* Narrow star (favorite) column */
+.contact_table th.col-fav,
+.contact_table td.col-fav {
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    padding-left: 6px;
+    padding-right: 6px;
+}

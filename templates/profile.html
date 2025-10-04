@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Профиль</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="/companies">Все компании</a> |
+                <a href="/logout">Выход</a>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Профиль пользователя</h2>
+            <p>Вы вошли как: <b>{{.username}}</b></p>
+            <p>
+                Администрирование: <a href="/apanel">перейти в админ панель</a>
+            </p>
+        </main>
+
+        <footer>
+            <hr />
+            <p>CRM © 2025</p>
+        </footer>
+    </body>
+</html>

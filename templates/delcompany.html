@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Удаление компании</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/companies">Все</a> |
+        <a href="/companies?status=new">Необзвоненные</a> |
+        <a href="/companies?status=called">Обзвоненные</a> |
+        <a href="/companies?status=done">Завершенные</a> |
+        <a href="/export">Экспорт</a> | <a href="/profile">Профиль</a> |
+        <a href="/logout">Выход</a>
+      </nav>
+    </header>
+    <main>
+      <div class="card">
+        <h2>Удаление компании</h2>
+        {{if .msg}}<div style="color:#047857; margin: 8px 0;">{{.msg}}</div>{{end}}
+        {{if .error}}<div style="color:#b91c1c; margin: 8px 0;">{{.error}}</div>{{end}}
+        <form method="POST" action="/delcompany">
+          <div class="row">
+            <label for="company">Представительство</label>
+            <select id="company" name="company" required>
+              <option value="">— выберите —</option>
+              {{range .companyOptions}}
+              <option value="{{.}}">{{.}}</option>
+              {{end}}
+            </select>
+          </div>
+          <div class="row">
+            <label for="inn_del">ИНН компании</label>
+            <input type="text" id="inn_del" name="inn" placeholder="ИНН для удаления" required />
+          </div>
+          <div class="row">
+            <button type="submit" style="background:#b91c1c; color:#fff;">Удалить</button>
+            <a href="/apanel" style="margin-left: 12px;">Назад</a>
+          </div>
+        </form>
+      </div>
+    </main>
+    <footer>
+      <hr />
+      <p>CRM © 2025</p>
+    </footer>
+  </body>
+</html>

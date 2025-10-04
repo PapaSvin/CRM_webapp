@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Вход</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="/register">Регистрация</a>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Вход</h2>
+            {{if .error}}
+            <p style="color: red">{{.error}}</p>
+            {{end}}
+            <form method="post" action="/login">
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Логин"
+                    required
+                /><br /><br />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Пароль"
+                    required
+                /><br /><br />
+                <button type="submit">Войти</button>
+            </form>
+        </main>
+
+        <footer>
+            <hr />
+            <p>CRM © 2025</p>
+        </footer>
+    </body>
+</html>

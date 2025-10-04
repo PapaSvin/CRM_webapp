@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.company.Name}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="/companies">Все компании</a> |
+        <a href="/profile">Профиль</a> |
+        <a href="/logout">Выход</a>
+    </nav>
+</header>
+
+<main>
+    <h2>{{.company.Name}}</h2>
+    <p><b>ИНН:</b> {{.company.INN}}</p>
+    <p><b>Сайт:</b> <a href="{{.company.Site}}" target="_blank">{{.company.Site}}</a></p>
+    <p><b>Представительство (company):</b> {{.company.Company}}</p>
+
+    {{if .favorites}}
+    <h3>Избранные контакты</h3>
+    <table class="contact_table">
+        <thead>
+            <tr>
+                <th>Тип</th>
+                <th>Контакт</th>
+                <th>Статус</th>
+                <th>Комментарий</th>
+            </tr>
+        </thead>
+        <tbody>
+        {{range .favorites}}
+            <tr>
+                <td>{{.type}}</td>
+                <td>
+                    {{if eq .type "Телефон"}}
+                        <a href="tel:{{.value}}">{{.value}}</a>
+                    {{else}}
+                        <a href="mailto:{{.value}}">{{.value}}</a>
+                    {{end}}
+                </td>
+                <td>
+                    {{if eq .type "Телефон"}}
+                        {{if .status}}Прозвонили{{else}}—{{end}}
+                    {{else}}
+                        {{if .status}}Написали{{else}}—{{end}}
+                    {{end}}
+                </td>
+                <td><small>{{.comment}}</small></td>
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h3>Редактировать основной комментарий и статус</h3>
+    <form method="post" action="/company/{{.company.ID}}/update">
+        <h3>Телефоны</h3>
+        <table class="contact_table">
+            <thead>
+                <tr>
+                    <th class="col-fav">★</th>
+                    <th>Телефон</th>
+                    <th>Прозвонили</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range .phones}}
+                <tr>
+                    <td class="col-fav" style="text-align:center">
+                        <input type="hidden" name="phone_fav_{{.id}}" value="0">
+                        <input type="checkbox" name="phone_fav_{{.id}}" value="1" {{if .fav}}checked{{end}} title="Избранное">
+                    </td>
+                    <td>{{.phone}}</td>
+                    <td>
+                        <input type="hidden" name="phone_called_{{.id}}" value="0">
+                        <input type="checkbox" name="phone_called_{{.id}}" value="1" {{if .called}}checked{{end}}>
+                    </td>
+                    <td><textarea name="phone_comment_{{.id}}" rows="1" cols="20">{{.comment}}</textarea></td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+
+        <h3>Email</h3>
+        <table class="contact_table">
+            <thead>
+                <tr>
+                    <th class="col-fav">★</th>
+                    <th>Email</th>
+                    <th>Написали</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range .emails}}
+                <tr>
+                    <td class="col-fav" style="text-align:center">
+                        <input type="hidden" name="email_fav_{{.id}}" value="0">
+                        <input type="checkbox" name="email_fav_{{.id}}" value="1" {{if .fav}}checked{{end}} title="Избранное">
+                    </td>
+                    <td><a href="mailto:{{.email}}">{{.email}}</a></td>
+                    <td>
+                        <input type="hidden" name="email_written_{{.id}}" value="0">
+                        <input type="checkbox" name="email_written_{{.id}}" value="1" {{if .written}}checked{{end}}>
+                    </td>
+                    <td><textarea name="email_comment_{{.id}}" rows="1" cols="20">{{.comment}}</textarea></td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+
+        <textarea name="comment" rows="3" cols="40">{{.company.Comment}}</textarea><br><br>
+        <select name="status">
+            <option value="new" {{if eq .company.Status "new"}}selected{{end}}>Необзвоненная</option>
+            <option value="called" {{if eq .company.Status "called"}}selected{{end}}>Обзвоненная</option>
+            <option value="done" {{if eq .company.Status "done"}}selected{{end}}>Завершенная</option>
+        </select><br><br>
+
+        <br><button type="submit" style="margin-bottom: 20px;">Сохранить</button>
+    </form>
+
+    <h3>История изменений</h3>
+    {{if .history}}
+    <table>
+        <thead>
+            <tr>
+                <th>Когда</th>
+                <th>Кто</th>
+                <th>Статус (был → стал)</th>
+                <th>Комментарий (был → стал)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .history}}
+            <tr>
+                <td>{{.ChangedAt}}</td>
+                <td>{{.ChangedBy}}</td>
+                <td><code>{{.OldStatus}}</code> → <code>{{.NewStatus}}</code></td>
+                <td><small>{{.OldComment}}</small> → <small>{{.NewComment}}</small></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p>Изменений пока нет.</p>
+    {{end}}
+</main>
+
+<footer>
+    <hr>
+    <p>CRM © 2025</p>
+</footer>
+</body>
+</html>

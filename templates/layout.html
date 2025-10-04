@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>{{block "title" .}}CRM{{end}}</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="/companies">Все контрагенты</a> |
+                <a href="/companies?status=new">Необзвоненные</a> |
+                <a href="/companies?status=called">Обзвоненные</a> |
+                <a href="/companies?status=done">Завершенные</a> |
+                <a href="/profile">Профиль</a> |
+                <a href="/logout">Выход</a>
+            </nav>
+        </header>
+
+        <main>{{block "content" .}}{{end}}</main>
+
+        <footer>
+            <hr />
+            <p>CRM &copy; 2025</p>
+        </footer>
+    </body>
+</html>

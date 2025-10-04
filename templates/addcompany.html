@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Добавить компанию</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="/companies">Все</a> |
+        <a href="/companies?status=new">Необзвоненные</a> |
+        <a href="/companies?status=called">Обзвоненные</a> |
+        <a href="/companies?status=done">Завершенные</a> |
+        <a href="/export">Экспорт</a> | <a href="/profile">Профиль</a> |
+        <a href="/logout">Выход</a>
+      </nav>
+    </header>
+    <main>
+      <div class="card">
+        <h2>Добавить компанию</h2>
+        {{if .error}}
+        <div class="error" style="color:#c00; margin-bottom: 8px;">{{.error}}</div>
+        {{end}}
+        <form method="POST" action="/addcompany">
+          <div class="row">
+            <label for="inn">ИНН</label>
+            <input type="text" id="inn" name="inn" placeholder="Например, 7707083893" required />
+          </div>
+          <div class="row">
+            <label for="company">Компания (группа)</label>
+            <select id="company" name="company">
+              <option value="">— не указано —</option>
+              {{range .companyOptions}}
+              <option value="{{.}}">{{.}}</option>
+              {{end}}
+            </select>
+          </div>
+          <div class="row">
+            <button type="submit">Найти и добавить</button>
+            <a href="/apanel" style="margin-left: 12px;">Назад</a>
+          </div>
+        </form>
+      </div>
+    </main>
+    <footer>
+      <hr />
+      <p>CRM © 2025</p>
+    </footer>
+  </body>
+  </html>

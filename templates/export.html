@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Экспорт XLSX</title>
+        <link rel="stylesheet" href="/static/style.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+            .row {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                margin-bottom: 8px;
+            }
+            .row label {
+                min-width: 120px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="/companies">Компании</a> |
+                <a href="/profile">Профиль</a> |
+                <a href="/logout">Выход</a>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Экспорт проделанной работы</h2>
+            <form method="get" action="/export">
+                <input type="hidden" name="download" value="1" />
+                <div class="row">
+                    <label>Пользователь:</label>
+                    <input
+                        type="text"
+                        name="user"
+                        placeholder="username (необязательно)"
+                    />
+                </div>
+                <div class="row">
+                    <label>Дата с:</label>
+                    <input type="date" name="from" />
+                </div>
+                <div class="row">
+                    <label>Дата по:</label>
+                    <input type="date" name="to" />
+                </div>
+                <div class="row">
+                    <label>Статус:</label>
+                    <select name="status">
+                        <option value="all">Любой</option>
+                        <option value="new">new</option>
+                        <option value="called">called</option>
+                        <option value="done">done</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label>Компания (company):</label>
+                    <select name="company_select" id="company_select">
+                        <option value="">— Компания —</option>
+                        {{range .companyOptions}}
+                        <option value="{{.}}">{{.}}</option>
+                        {{end}}
+                    </select>
+                    <input
+                        type="text"
+                        name="company"
+                        placeholder="часть названия компании"
+                    />
+                </div>
+                <button type="submit">Скачать XLSX</button>
+            </form>
+            <script>
+                // Выбор из списка не инициирует автосабмит; пользователь нажимает кнопку
+                (function () {
+                    const cs = document.getElementById("company_select");
+                    if (cs) {
+                        cs.addEventListener("change", () => {
+                            const form = cs.closest("form");
+                            const txt =
+                                form &&
+                                form.querySelector('input[name="company"]');
+                            if (txt && cs.value) txt.value = "";
+                        });
+                    }
+                })();
+            </script>
+        </main>
+
+        <footer>
+            <hr />
+            <p>CRM © 2025</p>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Админ панель</title>
+        <link rel="stylesheet" href="/static/style.css" />
+        <style>
+            /* minimal extra styling specific to admin page */
+            .admin-card { max-width: 560px; margin: 32px auto; padding: 16px 20px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
+            .admin-card h2 { margin-top: 0; }
+            .error { color: #b91c1c; margin-top: 8px; }
+            .row { margin: 8px 0; }
+        </style>
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="/companies">Все компании</a> |
+                <a href="/profile">Профиль</a> |
+                <a href="/logout">Выход</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="admin-card">
+                {{if .isAdmin}}
+                <h2>Админ панель</h2>
+                <p>Вы вошли как: <b>{{.username}}</b>. Доступ администратора активен.</p>
+                    <p><a href="/addcompany" class="btn">Добавить компанию по ИНН (Checko)</a></p>
+                <div class="row" style="margin-top:16px;">
+                    <a href="/delcompany" class="btn" style="color:#b91c1c;">Удаление компании</a>
+                </div>
+                <div class="row">
+                    <a href="/apanel/logout">Выйти из режима администратора</a>
+                </div>
+                <hr />
+                <p>Содержимое панели опишете позже — сейчас это заглушка.</p>
+                {{else}}
+                <h2>Вход в админ панель</h2>
+                <form method="post" action="/apanel">
+                    <div class="row">
+                        <label for="password">Пароль администратора</label><br />
+                        <input type="password" id="password" name="password" required style="width: 100%" />
+                    </div>
+                    <div class="row">
+                        <button type="submit">Войти</button>
+                    </div>
+                    {{if .error}}
+                    <div class="error">{{.error}}</div>
+                    {{end}}
+                </form>
+                {{end}}
+            </div>
+        </main>
+
+        <footer>
+            <hr />
+            <p>CRM © 2025</p>
+        </footer>
+    </body>
+</html>

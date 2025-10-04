@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Компании</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        <header>
+            <nav>
+                <a href="/companies">Все</a> |
+                <a href="/companies?status=new">Необзвоненные</a> |
+                <a href="/companies?status=called">Обзвоненные</a> |
+                <a href="/companies?status=done">Завершенные</a> |
+                <a href="/export">Экспорт</a> | <a href="/profile">Профиль</a> |
+                <a href="/logout">Выход</a>
+            </nav>
+        </header>
+
+        <main>
+            <h2>
+                Список компаний ( {{- if .status -}} {{ .status }} {{- else -}}
+                all {{- end -}} )
+            </h2>
+
+            <form
+                action="/companies"
+                method="get"
+                style="
+                    margin-bottom: 12px;
+                    display: flex;
+                    gap: 8px;
+                    align-items: center;
+                    flex-wrap: wrap;
+                "
+            >
+                {{if .status}}<input
+                    type="hidden"
+                    name="status"
+                    value="{{.status}}"
+                />{{end}}
+                <div style="position: relative">
+                    <input
+                        id="search"
+                        name="q"
+                        type="text"
+                        placeholder="Поиск по названию, ИНН, e‑mail, сайту, телефону"
+                        value="{{.q}}"
+                        autocomplete="off"
+                        style="width: 420px"
+                    />
+                    <div
+                        id="suggest"
+                        style="position: absolute; left: 0; right: 0"
+                    ></div>
+                </div>
+                <select name="company_select" id="company_select">
+                    <option value="">— Представительство —</option>
+                    {{range .companyOptions}}
+                    <option value="{{.}}" {{if eq $.company .}}selected{{end}}>
+                        {{.}}
+                    </option>
+                    {{end}}
+                </select>
+                <button type="submit">Найти</button>
+            </form>
+            <ul>
+                {{range .companies}}
+                <li class="company_data">
+                    <a href="/company/{{.id}}">{{.name}}</a>
+                    <div style="color: #64748b; font-size: 14px">
+                        ИНН: <span>{{.inn}}</span> &nbsp;|&nbsp; статус: {{- if
+                        .status -}} {{ .status }} {{- else -}} all {{- end -}}
+                        &nbsp;&nbsp;|&nbsp; представительство: {{.company}}
+                    </div>
+                </li>
+                {{else}}
+                <p>Нет компаний</p>
+                {{end}}
+            </ul>
+        </main>
+
+        <script>
+            // Простой автокомплит без зависимостей
+            (function () {
+                const input = document.getElementById("search");
+                const wrap = document.getElementById("suggest");
+                let box;
+                let last = "";
+                let sel = -1;
+
+                function ensureBox() {
+                    if (!box) {
+                        box = document.createElement("div");
+                        box.style.position = "absolute";
+                        box.style.top = "100%";
+                        box.style.left = "0";
+                        box.style.right = "0";
+                        box.style.background = "#fff";
+                        box.style.border = "1px solid #ccc";
+                        box.style.zIndex = "10";
+                        box.style.maxHeight = "260px";
+                        box.style.overflowY = "auto";
+                        wrap.appendChild(box);
+                    }
+                    return box;
+                }
+
+                function hide() {
+                    if (box) box.style.display = "none";
+                }
+                function show() {
+                    if (box) box.style.display = "block";
+                }
+
+                async function fetchSuggest(q) {
+                    const u = new URL("/api/suggest", window.location.origin);
+                    u.searchParams.set("q", q);
+                    const res = await fetch(u.toString(), {
+                        credentials: "same-origin",
+                    });
+                    if (!res.ok) return [];
+                    return res.json();
+                }
+
+                function render(list) {
+                    const b = ensureBox();
+                    b.innerHTML = "";
+                    if (!list.length) {
+                        hide();
+                        sel = -1;
+                        return;
+                    }
+                    list.forEach((it, i) => {
+                        const a = document.createElement("a");
+                        a.textContent = `${it.name} (ИНН: ${it.inn || "—"})`;
+                        a.href = `/company/${it.id}`;
+                        a.style.display = "block";
+                        a.style.padding = "6px 8px";
+                        a.style.textDecoration = "none";
+                        a.style.color = "#333";
+                        a.onmouseenter = () => (a.style.background = "#f0f6ff");
+                        a.onmouseleave = () =>
+                            (a.style.background = "transparent");
+                        a.dataset.index = i;
+                        b.appendChild(a);
+                    });
+                    show();
+                }
+
+                let timer;
+                input.addEventListener("input", () => {
+                    const q = input.value.trim();
+                    if (q === "") {
+                        hide();
+                        return;
+                    }
+                    if (q === last) return;
+                    last = q;
+                    clearTimeout(timer);
+                    timer = setTimeout(async () => {
+                        try {
+                            render(await fetchSuggest(q));
+                        } catch (e) {
+                            /* ignore */
+                        }
+                    }, 200);
+                });
+
+                function items() {
+                    return box ? Array.from(box.querySelectorAll("a")) : [];
+                }
+                function highlight() {
+                    items().forEach((a, i) => {
+                        a.style.background =
+                            i === sel ? "#e6f3ff" : "transparent";
+                    });
+                }
+
+                input.addEventListener("keydown", (e) => {
+                    const list = items();
+                    if (!list.length) return;
+                    if (e.key === "ArrowDown") {
+                        sel = Math.min(list.length - 1, sel + 1);
+                        highlight();
+                        e.preventDefault();
+                    } else if (e.key === "ArrowUp") {
+                        sel = Math.max(0, sel - 1);
+                        highlight();
+                        e.preventDefault();
+                    } else if (e.key === "Enter") {
+                        if (sel < 0) sel = 0;
+                        const a = list[sel];
+                        if (a) {
+                            window.location.href = a.href;
+                            e.preventDefault();
+                        }
+                    }
+                });
+
+                document.addEventListener("click", (e) => {
+                    if (!wrap.contains(e.target)) hide();
+                });
+                // Авто‑применение фильтра по компании
+                const cs = document.getElementById("company_select");
+                if (cs) {
+                    cs.addEventListener("change", () => {
+                        const form = cs.closest("form");
+                        // Если выбран пункт из списка, очищаем текстовое поле company, чтобы не мешало
+                        const txt =
+                            form && form.querySelector('input[name="company"]');
+                        if (txt) txt.value = "";
+                        form && form.submit();
+                    });
+                }
+
+                const searchHighlight = new Highlight();
+
+                CSS.highlights.set("searchHighlight", searchHighlight);
+
+                const elementsForHighlights = document.querySelectorAll(
+                    ".company_data a, .company_data div span"
+                );
+
+                function highlightAllOccurrences(
+                    textNode,
+                    searchTerm,
+                    searchHighlight
+                ) {
+                    const text = textNode.nodeValue;
+                    const termLength = searchTerm.length;
+
+                    for (let i = 0; i <= text.length - termLength; i++) {
+                        if (text.substr(i, termLength) === searchTerm) {
+                            console.log(
+                                `Found ${searchTerm} at index ${i}`,
+                                searchHighlight
+                            );
+
+                            const range = new Range();
+                            range.setStart(textNode, i);
+                            range.setEnd(textNode, i + termLength);
+                            searchHighlight.add(range);
+                        }
+                    }
+                }
+
+                elementsForHighlights.forEach((element) => {
+                    element.childNodes.forEach((textNode) => {
+                        if (textNode.nodeType === Node.TEXT_NODE) {
+                            highlightAllOccurrences(
+                                textNode,
+                                input.value,
+                                searchHighlight
+                            );
+                        }
+                    });
+                });
+            })();
+        </script>
+
+        <footer>
+            <hr />
+            <p>CRM © 2025</p>
+        </footer>
+    </body>
+</html>
